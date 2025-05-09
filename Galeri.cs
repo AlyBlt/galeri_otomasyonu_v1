@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GaleriUygulamasi
+namespace GaleriGorevGitHub
 {
+
     internal class Galeri
     {
         // bu sınıf içinde galeri ile ilgili kodlar yazılacak.
@@ -39,7 +39,13 @@ namespace GaleriUygulamasi
             }
         }
 
-        public int GaleridekiAracSayisi { get; set; }
+        public int GaleridekiAracSayisi
+        {
+            get
+            {
+                return Arabalar.Count(a => a.Durum == "Galeride");
+            }
+        }
 
         public int ToplamAracKiralamaSuresi
         {
@@ -55,14 +61,19 @@ namespace GaleriUygulamasi
             }
         }
 
-        public int ToplamAracKiralamaAdeti { get; set; }   
-        public float Ciro {  get; set; }
+        public int ToplamAracKiralamaAdeti
+        {
+            get
+            {
+                return Arabalar.Sum(a => a.KiralanmaSayisi);
+            }
+        }
+        public float Ciro;
 
         public void ArabaKirala(string plaka, int sure)
         {
-            
+
             Araba a = null;
-            // bu plakaya ait arabanın bulunması lazım
             if (Arabalar.Any(a => a.Plaka == plaka))
             {
                 foreach (Araba item in Arabalar)
@@ -75,15 +86,15 @@ namespace GaleriUygulamasi
             }
 
 
-                if (a != null)
-                {
-                    a.Durum = "Kirada";
-                     //a.KiralanmaSayisi++;
-                    // a.ToplamKiralanmaSuresi += sure;
+            if (a != null)
+            {
+                a.Durum = "Kirada";
 
-                    a.KiralamaSureleri.Add(sure);
-                }
-            
+                a.KiralamaSureleri.Add(sure);
+
+                Ciro += a.KiralamaBedeli * sure;
+            }
+
 
         }
         public void ArabaTeslimAl(string plaka)
@@ -122,7 +133,8 @@ namespace GaleriUygulamasi
 
                 if (a != null)
                 {
-                    a.KiralamaSureleri.RemoveAt(a.KiralamaSureleri.Count-1);
+                    Ciro -= a.KiralamaSureleri[a.KiralamaSureleri.Count - 1] * a.KiralamaBedeli;
+                    a.KiralamaSureleri.RemoveAt(a.KiralamaSureleri.Count - 1);
                     // a.KiralamaSureleri.RemoveAt
                     // KiralamaSureleri listesindeki en son elemanı listeden çıkar.
                     a.Durum = "Galeride";
@@ -130,18 +142,17 @@ namespace GaleriUygulamasi
             }
 
 
-            
+
         }
 
         public void ArabaEkle(string plaka, string marka, float kiralamaBedeli, string aTipi)
         {
-            // paramtreden aldığımız bilgiler ilr yeni bir araba nesnesi oluşmalı
-            // bu oluşan araba Arabalar listesine eklenmeli.
+            Araba a = new Araba(plaka, marka, kiralamaBedeli, aTipi);
+            this.Arabalar.Add(a);
 
-            //Araba a = new Araba(plaka,marka,kiralamaBedeli,aTipi);
-            //this.Arabalar.Add(a);
 
-            
         }
     }
+
+
 }
